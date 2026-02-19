@@ -1,5 +1,5 @@
-import { Form, Response } from '../types/types';
+import { Form, FormResponse } from '../types/types';
 
 export const forms: Form[] = [];
 
-export const responses: Response[] = [];
+export const responses: FormResponse[] = [];

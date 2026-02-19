@@ -96,6 +96,15 @@ export type GetFormsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetFormsQuery = { __typename?: 'Query', forms: Array<{ __typename?: 'Form', id: string, title: string, description?: string | null }> };
 
+export type CreateFormMutationVariables = Exact<{
+  title: Scalars['String']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  questions: Array<QuestionInput> | QuestionInput;
+}>;
+
+
+export type CreateFormMutation = { __typename?: 'Mutation', createForm: { __typename?: 'Form', id: string, title: string } };
+
 
 export const GetFormsDocument = `
     query GetForms {
@@ -106,15 +115,26 @@ export const GetFormsDocument = `
   }
 }
     `;
+export const CreateFormDocument = `
+    mutation CreateForm($title: String!, $description: String, $questions: [QuestionInput!]!) {
+  createForm(title: $title, description: $description, questions: $questions) {
+    id
+    title
+  }
+}
+    `;
 
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     GetForms: build.query<GetFormsQuery, GetFormsQueryVariables | void>({
       query: (variables) => ({ document: GetFormsDocument, variables })
     }),
+    CreateForm: build.mutation<CreateFormMutation, CreateFormMutationVariables>({
+      query: (variables) => ({ document: CreateFormDocument, variables })
+    }),
   }),
 });
 
 export { injectedRtkApi as api };
-export const { useGetFormsQuery, useLazyGetFormsQuery } = injectedRtkApi;
+export const { useGetFormsQuery, useLazyGetFormsQuery, useCreateFormMutation } = injectedRtkApi;
 
