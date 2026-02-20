@@ -4,7 +4,8 @@ import type { RootState } from '../store';
 import { useCreateFormMutation } from '../store/generated/graphql';
 import { 
   setTitle, setDescription, addQuestion, removeQuestion, 
-  updateQuestionLabel, changeQuestionType, addOption, updateOptionLabel 
+  updateQuestionLabel, changeQuestionType, addOption, updateOptionLabel,
+  toggleCorrectAnswer 
 } from '../store/slices/formBuilderSlice';
 
 export const useFormBuilder = () => {
@@ -23,27 +24,39 @@ export const useFormBuilder = () => {
   const handleUpdateOption = (questionId: string, optionIndex: number, label: string) => 
     dispatch(updateOptionLabel({ questionId, optionIndex, label }));
 
+  const handleToggleCorrect = (questionId: string, optionValue: string) => 
+    dispatch(toggleCorrectAnswer({ questionId, optionValue }));
+
   const saveForm = async () => {
     if (!title.trim()) return alert('Назва форми обовʼязкова!');
+    
+    const payload = {
+      title,
+      description: description || "",
+      questions: questions.map(q => ({
+        title: q.label || "Питання без назви",
+        type: q.type,
+        options: q.options || [],
+        correctAnswers: q.correctAnswers || [] 
+      }))
+    };
+
     try {
-      await createForm({
-        title, description,
-        questions: questions.map(q => ({
-          title: q.label || "Без назви",
-          type: q.type,
-          options: q.options || []
-        }))
-      }).unwrap();
+      await createForm(payload).unwrap();
       alert('Форму успішно створено!');
       navigate('/'); 
-    } catch (error) { console.error(error); }
+    } catch (error: unknown) { 
+      console.error(error); 
+      alert('Сталася помилка при збереженні');
+    }
   };
-
 
   return {
     title, description, questions, isLoading,
     handleUpdateTitle, handleUpdateDescription, handleAddQuestion,
     handleUpdateQuestion, handleChangeQuestionType, handleAddOption,
-    handleRemoveQuestion, handleUpdateOption, saveForm
+    handleRemoveQuestion, handleUpdateOption, 
+    handleToggleCorrect,
+    saveForm
   };
 };

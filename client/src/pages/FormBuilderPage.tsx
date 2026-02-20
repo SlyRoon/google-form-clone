@@ -9,6 +9,7 @@ export const FormBuilderPage = () => {
     handleAddQuestion, handleUpdateQuestion, 
     handleChangeQuestionType, handleAddOption,
     handleRemoveQuestion, handleUpdateOption, 
+    handleToggleCorrect, 
     saveForm 
   } = useFormBuilder();
 
@@ -16,7 +17,6 @@ export const FormBuilderPage = () => {
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
         
-
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
           <div>
             <h1 className="text-4xl font-black text-slate-900 tracking-tight">Конструктор</h1>
@@ -54,7 +54,8 @@ export const FormBuilderPage = () => {
             onChangeType={handleChangeQuestionType} 
             onAddOption={handleAddOption}
             onRemove={handleRemoveQuestion} 
-            onUpdateOption={handleUpdateOption}    
+            onUpdateOption={handleUpdateOption} 
+            onToggleCorrect={handleToggleCorrect} 
           />
         </div>
 

@@ -4,6 +4,7 @@ export const typeDefs = `#graphql
     type: String!
     title: String!
     options: [String!]
+    correctAnswers: [String!] 
   }
 
   type Form {
@@ -28,6 +29,7 @@ export const typeDefs = `#graphql
     type: String!
     title: String!
     options: [String!]
+    correctAnswers: [String!] 
   }
 
   input AnswerInput {

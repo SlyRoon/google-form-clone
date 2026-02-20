@@ -1,4 +1,4 @@
-import React from 'react';
+
 import type { QuestionDraft } from '../../store/slices/formBuilderSlice';
 import QuestionItem from './QuestionItem';
 
@@ -9,10 +9,11 @@ interface QuestionListProps {
   onAddOption: (id: string) => void;
   onRemove: (id: string) => void;
   onUpdateOption: (questionId: string, optionIndex: number, label: string) => void;
+  onToggleCorrect: (questionId: string, optionValue: string) => void;
 }
 
 export default function QuestionList({ 
-  questions, onUpdateLabel, onChangeType, onAddOption, onRemove, onUpdateOption 
+  questions, onUpdateLabel, onChangeType, onAddOption, onRemove, onUpdateOption, onToggleCorrect 
 }: QuestionListProps) {
   return (
     <div className="space-y-6 mt-8">
@@ -25,6 +26,7 @@ export default function QuestionList({
           onAddOption={onAddOption}
           onRemove={onRemove}
           onUpdateOption={onUpdateOption}
+          onToggleCorrect={onToggleCorrect} 
         />
       ))}
     </div>

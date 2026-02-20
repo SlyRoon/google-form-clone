@@ -8,8 +8,9 @@ export enum QuestionType {
 export interface Question {
   id: string;
   type: QuestionType;
-  label: string;
-  options?: string[]; 
+  title: string; 
+  options?: string[];
+  correctAnswers?: string[]; 
 }
 
 export interface Form {
@@ -21,7 +22,7 @@ export interface Form {
 
 export interface Answer {
   questionId: string;
-  value: string;
+  value: string; 
 }
 
 export interface FormResponse {
@@ -29,10 +30,11 @@ export interface FormResponse {
   formId: string;
   answers: Answer[];
 }
+
 export interface CreateFormArgs {
   title: string;
   description?: string;
-  questions: Omit<Question, 'id'>[];
+  questions: Omit<Question, 'id'>[]; 
 }
 
 export interface SubmitResponseArgs {
