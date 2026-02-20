@@ -5,7 +5,7 @@ export interface QuestionDraft {
   type: string;
   label: string;
   options?: string[];
-  correctAnswers?: string[]; 
+  correctAnswers?: string[];
 }
 
 export interface FormBuilderState {
@@ -52,7 +52,7 @@ const formBuilderSlice = createSlice({
       const question = state.questions.find((q) => q.id === action.payload.id);
       if (question) {
         question.type = action.payload.type;
-        question.correctAnswers = []; 
+        question.correctAnswers = [];
         
         const isChoice = action.payload.type === "MULTIPLE_CHOICE" || action.payload.type === "CHECKBOX";
         if (isChoice && (!question.options || question.options.length === 0)) {
@@ -90,12 +90,12 @@ const formBuilderSlice = createSlice({
         }
       }
     },
-    
     toggleCorrectAnswer(state, action: PayloadAction<{ questionId: string; optionValue: string }>) {
       const question = state.questions.find((q) => q.id === action.payload.questionId);
       if (question) {
-        if (!question.correctAnswers) question.correctAnswers = [];  
-        if (question.type === 'MULTIPLE_CHOICE') {
+        if (!question.correctAnswers) question.correctAnswers = [];
+        
+        if (question.type === 'MULTIPLE_CHOICE' || question.type === 'DATE') {
           question.correctAnswers = [action.payload.optionValue];
         } else if (question.type === 'CHECKBOX') {
           const index = question.correctAnswers.indexOf(action.payload.optionValue);
@@ -107,7 +107,6 @@ const formBuilderSlice = createSlice({
         }
       }
     },
-    
     resetBuilder: () => initialState,
   },
 });

@@ -8,7 +8,7 @@ interface QuestionItemProps {
   onAddOption: (id: string) => void;
   onRemove: (id: string) => void;
   onUpdateOption: (questionId: string, optionIndex: number, label: string) => void;
-  onToggleCorrect: (questionId: string, optionValue: string) => void; // <-- ДОДАЛИ
+  onToggleCorrect: (questionId: string, optionValue: string) => void;
 }
 
 export default function QuestionItem({ 
@@ -16,6 +16,7 @@ export default function QuestionItem({
 }: QuestionItemProps) {
   
   const isChoice = question.type === 'MULTIPLE_CHOICE' || question.type === 'CHECKBOX';
+  const hasCorrectDate = question.type === 'DATE' && question.correctAnswers && question.correctAnswers.length > 0;
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-6 relative">
@@ -23,7 +24,6 @@ export default function QuestionItem({
         type="button"
         onClick={() => onRemove(question.id)}
         className="absolute right-4 top-4 text-slate-300 hover:text-red-500 transition-colors p-1"
-        title="Видалити питання"
       >
         ✕
       </button>
@@ -33,7 +33,6 @@ export default function QuestionItem({
           <label className="block text-xs font-bold text-slate-400 mb-1 uppercase tracking-tight">Текст запитання</label>
           <input
             type="text"
-            placeholder="Введіть ваше запитання..."
             value={question.label || ''}
             onChange={(e) => onUpdateLabel(question.id, e.target.value)}
             className="w-full text-lg font-semibold border-b-2 border-slate-100 py-2 focus:border-indigo-500 outline-none transition-colors bg-transparent"
@@ -44,7 +43,7 @@ export default function QuestionItem({
           <select 
             value={question.type}
             onChange={(e) => onChangeType(question.id, e.target.value)}
-            className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 font-bold cursor-pointer"
+            className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-4 py-2.5 font-bold cursor-pointer"
           >
             <option value="TEXT">📝 Текстове поле</option>
             <option value="MULTIPLE_CHOICE">🔘 Один вибір</option>
@@ -55,51 +54,50 @@ export default function QuestionItem({
       </div>
 
       <div className="space-y-4">
-        {question.type === 'TEXT' && (
-          <div className="w-full p-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-sm italic">
-            Тут користувач зможе вписати свій текст... (Перевірка правильності тексту не підтримується)
-          </div>
-        )}
 
         {question.type === 'DATE' && (
-          <div className="flex flex-col gap-2">
-            <input 
-              type="date" 
-              disabled
-              className="w-full md:w-64 p-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-400 cursor-not-allowed"
-            />
+          <div className="space-y-3 pl-2 border-l-4 border-indigo-400 bg-indigo-50/50 p-4 rounded-r-xl">
+            <label className="block text-xs font-bold text-indigo-500 uppercase tracking-tighter">
+              Встановіть правильну дату для тесту:
+            </label>
+            <div className="flex items-center gap-3">
+              <input 
+                type="date" 
+
+                value={question.correctAnswers?.[0] || ''}
+                onChange={(e) => onToggleCorrect(question.id, e.target.value)}
+                className={`p-3 border-2 rounded-xl outline-none transition-all font-bold ${
+                  hasCorrectDate ? 'border-green-500 bg-white text-green-700' : 'border-slate-200 bg-white'
+                }`}
+              />
+              {hasCorrectDate && (
+                <span className="text-green-600 font-black text-sm animate-pulse">✓ ПРАВИЛЬНА ВІДПОВІДЬ ЗБЕРЕЖЕНА</span>
+              )}
+            </div>
           </div>
         )}
 
         {isChoice && (
           <div className="space-y-3 pl-2 border-l-4 border-slate-100">
-            <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-tighter">Варіанти відповідей (відмітьте правильні):</label>
+            <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-tighter">Варіанти відповідей:</label>
             {question.options?.map((opt, idx) => {
-
               const isCorrect = question.correctAnswers?.includes(opt);
-
               return (
                 <div key={idx} className="flex items-center gap-3">
-
                   <button
                     type="button"
                     onClick={() => onToggleCorrect(question.id, opt)}
                     className={`w-7 h-7 flex items-center justify-center rounded-md border-2 transition-all ${
-                      isCorrect 
-                        ? 'border-green-500 bg-green-500 text-white shadow-sm' 
-                        : 'border-slate-300 bg-slate-50 text-transparent hover:border-green-300'
+                      isCorrect ? 'border-green-500 bg-green-500 text-white' : 'border-slate-300 bg-slate-50'
                     }`}
-                    title="Позначити як правильну"
                   >
                     ✓
                   </button>
-                  
                   <input 
                     type="text"
                     value={opt}
-                    placeholder={`Варіант ${idx + 1}`}
                     onChange={(e) => onUpdateOption(question.id, idx, e.target.value)}
-                    className={`flex-1 text-sm border-b py-1 transition-all outline-none bg-transparent ${
+                    className={`flex-1 text-sm border-b py-1 outline-none bg-transparent ${
                       isCorrect ? 'border-green-300 font-bold text-green-800' : 'border-transparent focus:border-indigo-300'
                     }`}
                   />
@@ -109,7 +107,7 @@ export default function QuestionItem({
             <button 
               type="button"
               onClick={() => onAddOption(question.id)}
-              className="mt-2 flex items-center gap-2 text-indigo-600 text-xs font-black hover:text-indigo-800 transition-colors py-2 px-3 rounded-lg hover:bg-indigo-50 active:scale-95"
+              className="mt-2 text-indigo-600 text-xs font-black hover:bg-indigo-50 py-2 px-3 rounded-lg"
             >
               + ДОДАТИ ВАРІАНТ
             </button>
